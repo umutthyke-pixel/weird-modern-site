@@ -1,36 +1,84 @@
-// Custom Cursor
+// Audio Context for Sound Effects
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let audioCtx;
+
+function initAudio() {
+  if (!audioCtx) {
+    audioCtx = new AudioContext();
+  }
+}
+
+function playSound(type) {
+  if (!audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gainNode = audioCtx.createGain();
+  osc.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
+
+  if (type === 'hover') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+    gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
+  } else if (type === 'click') {
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
+  }
+}
+
+// Custom Cursor (Optimized and disabled on mobile)
 const cursor = document.getElementById('cursor-trail');
+const isMobile = window.matchMedia("(pointer: coarse)").matches;
 let mouseX = 0, mouseY = 0;
 let cursorX = 0, cursorY = 0;
 
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-});
+if (!isMobile) {
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
 
-function animateCursor() {
-  const dx = mouseX - cursorX;
-  const dy = mouseY - cursorY;
-  cursorX += dx * 0.2;
-  cursorY += dy * 0.2;
-  
-  cursor.style.transform = `translate(${cursorX}px, ${cursorY}px)`;
-  requestAnimationFrame(animateCursor);
+  function animateCursor() {
+    const dx = mouseX - cursorX;
+    const dy = mouseY - cursorY;
+    cursorX += dx * 0.2;
+    cursorY += dy * 0.2;
+    
+    cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
 }
-animateCursor();
+
+// Initialize audio on first user interaction
+document.body.addEventListener('click', initAudio, { once: true });
+document.body.addEventListener('mousemove', initAudio, { once: true });
 
 // Interactive Elements Hover
-const interactables = document.querySelectorAll('button, a');
+const interactables = document.querySelectorAll('button, a, .switch');
 interactables.forEach(el => {
   el.addEventListener('mouseenter', () => {
-    cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) scale(2)`;
-    cursor.style.backgroundColor = 'transparent';
-    cursor.style.border = '1px solid var(--text-primary)';
+    playSound('hover');
+    if (!isMobile) {
+      cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) scale(2)`;
+      cursor.style.backgroundColor = 'transparent';
+      cursor.style.border = '1px solid var(--text-primary)';
+    }
   });
   el.addEventListener('mouseleave', () => {
-    cursor.style.transform = `translate(${cursorX}px, ${cursorY}px) scale(1)`;
-    cursor.style.backgroundColor = 'var(--text-primary)';
-    cursor.style.border = 'none';
+    if (!isMobile) {
+      cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) scale(1)`;
+      cursor.style.backgroundColor = 'var(--text-primary)';
+      cursor.style.border = 'none';
+    }
   });
 });
 
@@ -51,6 +99,7 @@ runawayBtn.addEventListener('mousemove', (e) => {
 });
 
 runawayBtn.addEventListener('click', () => {
+  playSound('click');
   alert("You caught it! But reality is still an illusion.");
 });
 
@@ -69,6 +118,7 @@ const factContent = document.getElementById('fact-content');
 const generateFactBtn = document.getElementById('generate-fact');
 
 function getNewFact() {
+  playSound('click');
   const randomFact = facts[Math.floor(Math.random() * facts.length)];
   factContent.style.opacity = 0;
   setTimeout(() => {
@@ -81,3 +131,51 @@ factContent.style.transition = 'opacity 0.2s';
 getNewFact();
 
 generateFactBtn.addEventListener('click', getNewFact);
+
+// Doom Switch Logic
+const doomSwitch = document.getElementById('doom-switch');
+let doomInterval;
+doomSwitch.addEventListener('change', (e) => {
+  playSound('click');
+  if (e.target.checked) {
+    document.body.classList.add('doom-mode');
+    doomInterval = setInterval(() => {
+      if (audioCtx) {
+        const osc = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        osc.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(500, audioCtx.currentTime + 0.2);
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
+      }
+    }, 400);
+  } else {
+    document.body.classList.remove('doom-mode');
+    clearInterval(doomInterval);
+  }
+});
+
+// Bouncing DVD Element
+const dvd = document.getElementById('bouncing-dvd');
+let dvdX = 100, dvdY = 100;
+let dvdSpeedX = 2, dvdSpeedY = 2;
+
+function animateDVD() {
+  const rect = dvd.getBoundingClientRect();
+  if (dvdX + rect.width >= window.innerWidth || dvdX <= 0) {
+    dvdSpeedX *= -1;
+  }
+  if (dvdY + rect.height >= window.innerHeight || dvdY <= 0) {
+    dvdSpeedY *= -1;
+  }
+  dvdX += dvdSpeedX;
+  dvdY += dvdSpeedY;
+  dvd.style.transform = `translate3d(${dvdX}px, ${dvdY}px, 0)`;
+  requestAnimationFrame(animateDVD);
+}
+animateDVD();

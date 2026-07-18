@@ -25,6 +25,16 @@ body {
   cursor: none; /* Custom cursor */
 }
 
+/* Fallback cursor for mobile/touch */
+@media (pointer: coarse) {
+  body {
+    cursor: auto;
+  }
+  .cursor-trail {
+    display: none !important;
+  }
+}
+
 /* Custom Cursor */
 .cursor-trail {
   position: fixed;
@@ -37,8 +47,9 @@ body {
   pointer-events: none;
   z-index: 9999;
   mix-blend-mode: difference;
-  transition: transform 0.1s ease-out;
-  transform: translate(-50%, -50%);
+  transition: width 0.1s, height 0.1s, background-color 0.1s; /* removed transform transition for performance */
+  transform: translate3d(-50%, -50%, 0);
+  will-change: transform;
 }
 
 /* Marquee */
@@ -161,7 +172,7 @@ body {
 }
 
 .card-4 {
-  grid-column: 7 / 12;
+  grid-column: 7 / 13;
   margin-top: 80px;
   min-height: 300px;
   display: flex;
@@ -170,6 +181,12 @@ body {
   justify-content: center;
   position: relative;
   overflow: hidden;
+}
+
+.card-5 {
+  grid-column: 4 / 10;
+  margin-top: 50px;
+  text-align: center;
 }
 
 /* Buttons */
@@ -194,11 +211,110 @@ button:hover {
   position: absolute;
 }
 
+/* Switch Slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  margin-top: 20px;
+}
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #333;
+  transition: .4s;
+  border-radius: 34px;
+}
+@media (pointer: coarse) {
+  .slider { cursor: pointer; }
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: #ff4444;
+  box-shadow: 0 0 15px #ff4444;
+}
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Red Overlay for Doom Switch */
+.red-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: rgba(255, 0, 0, 0);
+  pointer-events: none;
+  z-index: 9998;
+  transition: background-color 0.2s;
+}
+body.doom-mode .red-overlay {
+  background-color: rgba(255, 0, 0, 0.4);
+  animation: shake 0.2s infinite;
+}
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(3px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(3px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
+
+/* Bouncing DVD Element */
+.bouncing-dvd {
+  position: fixed;
+  top: 0; left: 0;
+  padding: 10px 20px;
+  background: var(--text-primary);
+  color: var(--bg-color);
+  font-weight: 900;
+  border-radius: 4px;
+  z-index: 90;
+  pointer-events: none;
+  font-size: 0.8rem;
+  will-change: transform;
+}
+
 /* Media Queries */
 @media (max-width: 900px) {
-  .card-1, .card-2, .card-3, .card-4 {
-    grid-column: 1 / 13;
-    margin-top: 20px;
+  .asymmetric-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .card-1, .card-2, .card-3, .card-4, .card-5 {
+    grid-column: auto;
+    margin-top: 0;
     transform: none;
+  }
+  .glitch {
+    font-size: 3rem;
+  }
+  .marquee {
+    font-size: 0.8rem;
   }
 }
