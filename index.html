@@ -3,14 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Weird & Modern</title>
+  <title>T H E  V O I D</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="cursor-trail" id="cursor-trail"></div>
+
+  <!-- Giant Eye -->
+  <div class="giant-eye-container" id="eye-container">
+    <div class="eye-white">
+      <div class="eye-pupil" id="eye-pupil"></div>
+    </div>
+  </div>
 
   <!-- DVD Bouncing Element -->
   <div class="bouncing-dvd" id="bouncing-dvd">SİMÜLASYON HATASI</div>
@@ -20,56 +27,71 @@
       ERROR 404: REALITY NOT FOUND &nbsp;&nbsp;&bull;&nbsp;&nbsp;
       DID YOU KNOW THAT WATER IS ACTUALLY DRY? &nbsp;&nbsp;&bull;&nbsp;&nbsp;
       PLEASE DO NOT FEED THE ALGORITHMS &nbsp;&nbsp;&bull;&nbsp;&nbsp;
-      EVERYTHING IS FINE &nbsp;&nbsp;&bull;&nbsp;&nbsp;
+      WAKE UP WAKE UP WAKE UP &nbsp;&nbsp;&bull;&nbsp;&nbsp;
       ERROR 404: REALITY NOT FOUND &nbsp;&nbsp;&bull;&nbsp;&nbsp;
       DID YOU KNOW THAT WATER IS ACTUALLY DRY? &nbsp;&nbsp;&bull;&nbsp;&nbsp;
       PLEASE DO NOT FEED THE ALGORITHMS &nbsp;&nbsp;&bull;&nbsp;&nbsp;
-      EVERYTHING IS FINE &nbsp;&nbsp;&bull;&nbsp;&nbsp;
+      WAKE UP WAKE UP WAKE UP &nbsp;&nbsp;&bull;&nbsp;&nbsp;
     </div>
   </div>
 
   <main class="container">
     <header class="header">
-      <h1 class="glitch" data-text="AESTHETIC NONSENSE">AESTHETIC NONSENSE</h1>
-      <p class="subtitle">A brutalist journey into the unexpected.</p>
+      <h1 class="glitch dynamic-glitch" data-text="AESTHETIC NONSENSE">AESTHETIC NONSENSE</h1>
+      <p class="subtitle dynamic-glitch">A brutalist journey into the unexpected.</p>
+      <div class="blink-counter">
+        Geçen süredir göz kırpmadın: <span id="blink-timer">0</span> saniye
+      </div>
     </header>
 
     <section class="asymmetric-grid">
-      <div class="card card-1 glass">
-        <h2>Cyber Duck</h2>
-        <p>It watches you compile.</p>
-        <img src="assets/cyber_duck.jpg" alt="Cyber Duck" class="weird-image" />
+      <div class="card card-1 brutal">
+        <h2 class="dynamic-glitch">Müşteri Temsilcimiz</h2>
+        <p>Sizinle ilgilenmek için can atıyor.</p>
+        <img src="assets/gothic_frog.jpg" alt="Gothic Frog" class="weird-image" />
       </div>
 
-      <div class="card card-2 glass text-block">
-        <h3 id="fact-title">Random Fact</h3>
+      <div class="card card-2 brutal text-block">
+        <h3 id="fact-title" class="dynamic-glitch">Random Fact</h3>
         <p id="fact-content">Loading absurd reality...</p>
         <button id="generate-fact" class="btn-primary">Generate Truth</button>
       </div>
 
-      <div class="card card-3 glass">
-        <h2>Space Toaster</h2>
-        <p>The breakfast of astronauts.</p>
-        <img src="assets/space_toaster.jpg" alt="Space Toaster" class="weird-image" />
+      <div class="card card-3 brutal">
+        <h2 class="dynamic-glitch">Evcil Köpeğim</h2>
+        <p>Isırmaz, sadece ruhunu emer.</p>
+        <img src="assets/dark_geometry.jpg" alt="Dark Geometry" class="weird-image" />
       </div>
 
-      <div class="card card-4 glass interactive-zone">
-        <h2>Try to click me</h2>
+      <div class="card card-4 brutal interactive-zone">
+        <h2 class="dynamic-glitch">Try to click me</h2>
         <button id="runaway-btn" class="btn-danger">Click Me</button>
       </div>
 
-      <div class="card card-5 glass do-not-touch-zone">
-        <h2 style="color: #ff4444;">SAKIN DOKUNMA</h2>
+      <div class="card card-5 brutal do-not-touch-zone">
+        <h2 style="color: var(--accent-red);" class="dynamic-glitch">SAKIN DOKUNMA</h2>
         <p>Dünyanın sonunu getirecek şalter.</p>
         <label class="switch">
           <input type="checkbox" id="doom-switch">
           <span class="slider"></span>
         </label>
       </div>
+
+      <div class="card card-6 brutal">
+        <h2 class="dynamic-glitch">Hiçlik Küpü</h2>
+        <p>Lütfen 5 saniyeden fazla bakmayın.</p>
+        <img src="assets/void_cube.jpg" alt="Void Cube" class="weird-image" />
+      </div>
+
+      <div class="card card-7 brutal center-content">
+        <h2 class="dynamic-glitch">TEHLİKE</h2>
+        <button id="delete-internet" class="btn-danger giant-btn">İnterneti Sil</button>
+      </div>
     </section>
   </main>
 
   <div id="red-overlay" class="red-overlay"></div>
+  <div id="popup-container"></div>
 
   <script src="main.js"></script>
 </body>

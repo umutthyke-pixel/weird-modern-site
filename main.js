@@ -16,29 +16,37 @@ function playSound(type) {
   gainNode.connect(audioCtx.destination);
 
   if (type === 'hover') {
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.1);
     gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
     osc.start();
     osc.stop(audioCtx.currentTime + 0.1);
   } else if (type === 'click') {
     osc.type = 'square';
-    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+    osc.frequency.setValueAtTime(50, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.1);
     gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
     gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
     osc.start();
     osc.stop(audioCtx.currentTime + 0.1);
+  } else if (type === 'error') {
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
+    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.2);
   }
 }
 
-// Custom Cursor (Optimized and disabled on mobile)
+// Custom Cursor
 const cursor = document.getElementById('cursor-trail');
 const isMobile = window.matchMedia("(pointer: coarse)").matches;
-let mouseX = 0, mouseY = 0;
-let cursorX = 0, cursorY = 0;
+let mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+let cursorX = mouseX, cursorY = mouseY;
 
 if (!isMobile) {
   document.addEventListener('mousemove', (e) => {
@@ -49,8 +57,8 @@ if (!isMobile) {
   function animateCursor() {
     const dx = mouseX - cursorX;
     const dy = mouseY - cursorY;
-    cursorX += dx * 0.2;
-    cursorY += dy * 0.2;
+    cursorX += dx * 0.4;
+    cursorY += dy * 0.4;
     
     cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0)`;
     requestAnimationFrame(animateCursor);
@@ -58,9 +66,30 @@ if (!isMobile) {
   animateCursor();
 }
 
-// Initialize audio on first user interaction
 document.body.addEventListener('click', initAudio, { once: true });
 document.body.addEventListener('mousemove', initAudio, { once: true });
+
+// Giant Eye Tracking
+const eyePupil = document.getElementById('eye-pupil');
+const eyeContainer = document.getElementById('eye-container');
+
+function animateEye() {
+  const rect = eyeContainer.getBoundingClientRect();
+  const eyeCenterX = rect.left + rect.width / 2;
+  const eyeCenterY = rect.top + rect.height / 2;
+
+  const angle = Math.atan2(mouseY - eyeCenterY, mouseX - eyeCenterX);
+  const distance = Math.min(rect.width / 2 - 15, Math.hypot(mouseX - eyeCenterX, mouseY - eyeCenterY) / 10);
+  
+  const pupilX = Math.cos(angle) * distance;
+  const pupilY = Math.sin(angle) * distance;
+
+  eyePupil.style.transform = `translate(calc(-50% + ${pupilX}px), calc(-50% + ${pupilY}px))`;
+  requestAnimationFrame(animateEye);
+}
+if (!isMobile) {
+  animateEye();
+}
 
 // Interactive Elements Hover
 const interactables = document.querySelectorAll('button, a, .switch');
@@ -70,13 +99,13 @@ interactables.forEach(el => {
     if (!isMobile) {
       cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) scale(2)`;
       cursor.style.backgroundColor = 'transparent';
-      cursor.style.border = '1px solid var(--text-primary)';
+      cursor.style.border = '2px solid var(--accent-red)';
     }
   });
   el.addEventListener('mouseleave', () => {
     if (!isMobile) {
       cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) scale(1)`;
-      cursor.style.backgroundColor = 'var(--text-primary)';
+      cursor.style.backgroundColor = 'var(--accent-red)';
       cursor.style.border = 'none';
     }
   });
@@ -87,31 +116,29 @@ const runawayBtn = document.getElementById('runaway-btn');
 const card4 = document.querySelector('.card-4');
 
 runawayBtn.addEventListener('mousemove', (e) => {
+  if (isMobile) return;
   const cardRect = card4.getBoundingClientRect();
   const btnRect = runawayBtn.getBoundingClientRect();
-  
-  // Calculate new position within card bounds
   let newX = Math.random() * (cardRect.width - btnRect.width);
   let newY = Math.random() * (cardRect.height - btnRect.height);
-  
   runawayBtn.style.left = `${newX}px`;
   runawayBtn.style.top = `${newY}px`;
 });
 
 runawayBtn.addEventListener('click', () => {
   playSound('click');
-  alert("You caught it! But reality is still an illusion.");
+  alert("N E D E N   T I K L A D I N ?");
 });
 
 // Random Fact Generator
 const facts = [
-  "In a parallel universe, this website reads you.",
-  "Dolphins secretly control the stock market.",
-  "If you stare at a blank wall long enough, it stares back.",
-  "The concept of 'Tuesday' was invented to sell more tacos.",
-  "Your shadow is just a 2D entity trying to escape the 3D realm.",
-  "Bananas are curved because they try to reach the moon.",
-  "Gravity is just a suggestion."
+  "Ruhun şu an bulutlara yedekleniyor.",
+  "Duvardaki leke aslında seni izliyor.",
+  "Gerçeklik sadece bir donanım hatası.",
+  "Eğer hiçlik varsa, sen nesin?",
+  "Zaman sadece sen saate baktığında ilerler.",
+  "Aynadaki yansıman senden 2 saniye geride.",
+  "Oksijen aslında seni 80 yılda öldüren bir zehir."
 ];
 
 const factContent = document.getElementById('fact-content');
@@ -120,16 +147,15 @@ const generateFactBtn = document.getElementById('generate-fact');
 function getNewFact() {
   playSound('click');
   const randomFact = facts[Math.floor(Math.random() * facts.length)];
-  factContent.style.opacity = 0;
-  setTimeout(() => {
-    factContent.textContent = randomFact;
-    factContent.style.opacity = 1;
-  }, 200);
+  factContent.textContent = "";
+  let i = 0;
+  const typeInterval = setInterval(() => {
+    factContent.textContent += randomFact.charAt(i);
+    i++;
+    if (i >= randomFact.length) clearInterval(typeInterval);
+  }, 30);
 }
-
-factContent.style.transition = 'opacity 0.2s';
 getNewFact();
-
 generateFactBtn.addEventListener('click', getNewFact);
 
 // Doom Switch Logic
@@ -146,14 +172,14 @@ doomSwitch.addEventListener('change', (e) => {
         osc.connect(gainNode);
         gainNode.connect(audioCtx.destination);
         osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-        osc.frequency.linearRampToValueAtTime(500, audioCtx.currentTime + 0.2);
-        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        gainNode.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+        osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.1);
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
         osc.start();
-        osc.stop(audioCtx.currentTime + 0.4);
+        osc.stop(audioCtx.currentTime + 0.2);
       }
-    }, 400);
+    }, 200);
   } else {
     document.body.classList.remove('doom-mode');
     clearInterval(doomInterval);
@@ -163,19 +189,69 @@ doomSwitch.addEventListener('change', (e) => {
 // Bouncing DVD Element
 const dvd = document.getElementById('bouncing-dvd');
 let dvdX = 100, dvdY = 100;
-let dvdSpeedX = 2, dvdSpeedY = 2;
+let dvdSpeedX = 3, dvdSpeedY = 3;
 
 function animateDVD() {
   const rect = dvd.getBoundingClientRect();
-  if (dvdX + rect.width >= window.innerWidth || dvdX <= 0) {
-    dvdSpeedX *= -1;
-  }
-  if (dvdY + rect.height >= window.innerHeight || dvdY <= 0) {
-    dvdSpeedY *= -1;
-  }
+  if (dvdX + rect.width >= window.innerWidth || dvdX <= 0) dvdSpeedX *= -1;
+  if (dvdY + rect.height >= window.innerHeight || dvdY <= 0) dvdSpeedY *= -1;
   dvdX += dvdSpeedX;
   dvdY += dvdSpeedY;
   dvd.style.transform = `translate3d(${dvdX}px, ${dvdY}px, 0)`;
   requestAnimationFrame(animateDVD);
 }
 animateDVD();
+
+// Fake Blink Counter
+const blinkTimer = document.getElementById('blink-timer');
+let blinks = 0;
+setInterval(() => {
+  blinks++;
+  blinkTimer.textContent = blinks;
+}, 1000);
+
+// Glitch Text Effect
+const glitchTexts = document.querySelectorAll('.dynamic-glitch');
+const chars = '!<>-_\\/[]{}—=+*^?#________';
+setInterval(() => {
+  const el = glitchTexts[Math.floor(Math.random() * glitchTexts.length)];
+  const originalText = el.getAttribute('data-text') || el.innerText;
+  if (!el.getAttribute('data-text')) el.setAttribute('data-text', originalText);
+  
+  let glitched = '';
+  for(let i=0; i<originalText.length; i++) {
+    if (Math.random() < 0.1) {
+      glitched += chars[Math.floor(Math.random() * chars.length)];
+    } else {
+      glitched += originalText[i];
+    }
+  }
+  el.innerText = glitched;
+  
+  setTimeout(() => {
+    el.innerText = originalText;
+  }, 100);
+}, 2000);
+
+// Delete Internet Popups
+const deleteBtn = document.getElementById('delete-internet');
+const popupContainer = document.getElementById('popup-container');
+const errorMsgs = ["SYSTEM FAILURE", "DATA CORRUPT", "UNAUTHORIZED ACCESS", "VOID OPENED", "PLEASE BLINK", "NO ESCAPE"];
+
+deleteBtn.addEventListener('click', () => {
+  let count = 0;
+  const interval = setInterval(() => {
+    if (count > 50) {
+      clearInterval(interval);
+      return;
+    }
+    playSound('error');
+    const popup = document.createElement('div');
+    popup.className = 'fake-popup';
+    popup.textContent = errorMsgs[Math.floor(Math.random() * errorMsgs.length)];
+    popup.style.left = `${Math.random() * 80}vw`;
+    popup.style.top = `${Math.random() * 80}vh`;
+    popupContainer.appendChild(popup);
+    count++;
+  }, 50);
+});
